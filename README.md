@@ -57,4 +57,66 @@ sequenceDiagram
     SSTable->>Server: Register in Manifest
 ~~~
 
+---
+## ✨Technical Features
 
+### 🏗️ Storage & Indexing
+
+- **Sparse Indexing:**  
+  SSTables store a key-offset every 100 keys. This allows `O(logN)` lookups with minimal memory footprint.
+- **Cuckoo Membership Filter:**  
+  A 4-slot bucket Cuckoo Filter intercepts "ghost reads" before they hit the disk, significantly reducing I/O for non-existent keys.
+- **Type Inference Engine:**  
+  VortexDB automatically detects and tags data types (`INT`, `BOOL`, `JSON`, `STRING`) at the point of entry, optimizing storage and retrieval logic.
+
+### 🚀 Runtime Optimizations
+
+- **LRU Value Cache:**  
+  The `VLogReader` maintains a 2,000-entry Least Recently Used (LRU) cache to eliminate disk seek latency for "hot" data.
+- **Zero-Copy Buffering:**
+  The `VLogWriter` utilizes a 64KB internal buffer to batch disk writes, protecting the SSD from excessive small-write cycles.
+- **Multi-Threaded Winsock Server:**  
+  A high-concurrency TCP server using `std::shared_mutex` (Single-Writer/Multiple-Reader) for thread-safe network access.
+
+---
+
+## 📐 Usage & Interactive Shell
+VortexDB includes a powerful CLI that lets you navigate your database like a directory.
+
+### 💻 Interactive Shell Example
+
+```Vortex [root] > spawn users
+Vortex [root] > cd users
+Vortex [root/users] > put ameetesh {"role": "admin"}
+Vortex [root/users] > get ameetesh
+{"role": "admin"}
+Vortex [root/users] > stats
+--- [root_users] HEALTH REPORT ---
+   Live Keys     : 1
+   Total Entries : 1
+   Waste Ratio   : 0.00%
+```
+### 🌐 Network Protocol (TCP Port 8080)
+
+You can communicate with the engine via any TCP client:
+
+-`SET <key> <value>` - Writes data and returns OK.
+
+-`GET <key>` - Retrieves value or ERROR.
+
+-`GET RANGE <start> <end>` - Performs a lexicographical range scan.
+
+-`GET <prefix>*` - Prefix-based search (e.g., GET user_*).
+
+-`SAVE <state_name>` - Creates a snapshot of the current DB state.
+
+---
+
+### 🛡️ Data Integrity & Recovery
+VortexDB is built for persistence. Every build and run cycle is protected by:
+- **CRC32 Checksums:**  
+  Every VLog entry is hashed. If data is corrupted on disk, the reader detects the mismatch and prevents invalid data from reaching the application.
+- **The Manifest System:**
+  A binary registry that tracks all active SSTables. This prevents "Orphaned Files" if the system crashes during a flush.
+- **Automatic VLog Recovery:**  
+  On startup, VortexDB scans the Value Log to reconstruct the Memtable if the index file is missing or out of sync.

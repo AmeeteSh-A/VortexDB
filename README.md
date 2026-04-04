@@ -120,3 +120,62 @@ VortexDB is built for persistence. Every build and run cycle is protected by:
   A binary registry that tracks all active SSTables. This prevents "Orphaned Files" if the system crashes during a flush.
 - **Automatic VLog Recovery:**  
   On startup, VortexDB scans the Value Log to reconstruct the Memtable if the index file is missing or out of sync.
+
+---
+
+## ⚠️Technical Trade-offs (Known & Intentional)
+VortexDB is a **Systems Exploration project**. To achieve its specific performance goals, certain trade-offs were made:
+- **Platform Lock-in:**  
+  The networking layer utilizes `Winsock2`, making the server component specific to Windows environments.
+- **Blocking Compaction:**
+  To ensure 100% consistency, the `compact()` operation is a "Stop-The-World" event that locks the database during the merge.
+- **Storage Overhead:**  
+  Because it is optimized for speed, VortexDB creates multiple files (VLogs, SSTs, Idx, Manifest). Use `compact` regularly to prune stale data.
+- **Raw Pointer Management:**  
+  The engine uses raw pointers for the recursive sub-db tree to maximize control over the destruction order, requiring careful manual memory management in the `VortexDB` destructor.
+
+---
+
+### 📂 Project Structure
+
+```text
+/
+├── vortex.h / .cpp       # 🧠 The Core Engine & Path Router
+├── vlog.h / .cpp         # 📜 WiscKey Value Log (Buffered I/O + LRU)
+├── sstable.h / .cpp      # 📑 Sorted String Tables (Sparse Index)
+├── cuckoo.h / .cpp       # 🐦 Probabilistic Membership Filter
+├── manifest.h / .cpp     # 🗃️ DB State & File Registry
+├── server.h / .cpp       # 🌐 Winsock2 Multi-threaded Server
+└── main.cpp              # 🐚 Interactive Shell & Entry Point
+```
+
+---
+
+## 🚀 Getting Started
+
+**Prerequisites**
+- **Compiler:** MSVC (Visual Studio 2019+) or MinGW with C++17 support.
+- **Library:** `ws2_32.lib` (Linked automatically via `#pragma`).
+
+
+**Build & Run**
+- Clone the repository.
+- Compile using your preferred C++ compiler:
+  `g++ -std=c++17 main.cpp vortex.cpp vlog.cpp sstable.cpp manifest.cpp cuckoo.cpp server.cpp -lws2_32 -o vortexdb.exe`
+- Launch `vortexdb.exe`.
+
+---
+
+## 👨‍💻Author
+
+Built by **Ameetesh**  
+B.Tech Undergraduate (South Asian University)  
+Focused on Distributed Systems, Database Internals, and Performance Engineering.
+
+---
+
+## License
+
+Apache License 2.0.
+
+<p align="right">(<a href="#veilar">back to top</a>)</p>

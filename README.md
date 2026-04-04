@@ -125,7 +125,12 @@ VortexDB is built for persistence. Every build and run cycle is protected by:
 
 ## 📊 Benchmarking & Performance Analysis
 
-To validate VortexDB's architecture, we benchmarked it against standard embedded databases: **LevelDB** and **SQLite** (in both individual and batched transaction modes). The tests expose the highly asymmetric performance profile of the WiscKey architecture. 
+To validate VortexDB's architecture, I benchmarked it against standard embedded databases: **LevelDB** and **SQLite** (in both individual and batched transaction modes). The tests expose the highly asymmetric performance profile of the WiscKey architecture. 
+
+### System Specifications & Baseline Methodology
+* **CPU:** Intel Core i5-12450HX | **RAM:** 12GB @ 4800 MT/s | **Storage:** 512GB NVMe SSD | **OS:** Windows 11 Home (64-bit)
+* **Versions:** SQLite v3.51.3 (Amalgamation), LevelDB v1.23
+* **Payload Profile:** The following baseline test uses **small payloads** (keys ~8 bytes, values ~10 bytes). SQLite was run with `PRAGMA synchronous = OFF` and `journal_mode = MEMORY` to strip away ACID overhead and test its absolute maximum theoretical memory-throughput.
 
 ### Comprehensive Results (Memtable Size: 10,000)
 
@@ -138,6 +143,8 @@ To validate VortexDB's architecture, we benchmarked it against standard embedded
 | **4. Read Miss** | ms/op | **0.001** | 0.0004 | 0.051 | 0.055 |
 | **5. Range Scan** | ms (Cold) | **6.58** | 0.17 | 0.36 | 0.33 |
 | | ms (Hot) | **6.44** | 0.15 | 0.28 | 0.27 |
+
+> 📑 **Deep Dive:** I have aldo benchmarked VortexDB at different Memtable as well as payload size(s). **For a detailed breakdown of these numbers, including how VortexDB crushes, matches or lags on certain metrics and the exact architectural reasons behind every one of those, please see [benchmark.md](benchmark.md).**
 
 ---
 

@@ -37,4 +37,24 @@ VortexDB's standout feature is its ability to spawn child databases within paren
 
 >**VortexDB** uses a **custom routing logic** that resolves paths (e.g., `root/users/configs/theme`). Each "Sub-Vortex" is a fully independent VortexDB instance with its own Memtable, SSTables, and VLog.
 
+---
+
+~~~ mermaid
+sequenceDiagram
+    participant Client
+    participant Server
+    participant Memtable
+    participant VLog
+    participant SSTable
+
+    Client->>Server: SET "user_1" "data_payload"
+    Server->>Server: Infer Type (JSON/String/Int)
+    Server->>VLog: Append Entry + CRC32
+    VLog-->>Server: Return ValuePointer {file_id, offset, size}
+    Server->>Memtable: Insert Key + ValuePointer
+    Note over Memtable: If size > 100k
+    Memtable->>SSTable: Flush (Write Sparse Index)
+    SSTable->>Server: Register in Manifest
+~~~
+
 

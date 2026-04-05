@@ -4,8 +4,8 @@
 
 ---
 ### 🔗 Quick Links
-- [⚡ The Efficiency Gap](#-the-efficiency-gap) - [⚙️ Architecture](#%EF%B8%8F-architecture-the-invisible-hook) - [📦 Installation Steps](#-installation)
-- [📐 Usage Example](#-usage-example) - [✨Features](#supported-features) -[📄Documentation](#documentation) - [📂 Project Structure](#-project-structure)
+- [⚡ The Performance Gap](#-the-performance-gap) - [⚙️ Architecture](#️-architecture-the-vortex-hook) - [📦 Getting Started](#-getting-started)
+- [📐 Usage Example](#-usage--interactive-shell) - [✨ Features](#technical-features) - [📊 Benchmarks](#-benchmarking--performance-analysis) - [📂 Project Structure](#-project-structure)
 ---
 ## What Problem Does VortexDB Solve?
 
@@ -16,7 +16,7 @@ VortexDB solves this by implementing a Separation of Concerns:
 - Values are stored in an append-only Value Log (VLog).
 
 This ensures that during compaction, the engine only reshuffles small pointers, leaving the heavy data untouched.
-<p align="right">(<a href="#veilar">back to top</a>)</p>
+<p align="right">(<a href="#vortexdb">back to top</a>)</p>
 
 ---
 
@@ -28,6 +28,8 @@ This ensures that during compaction, the engine only reshuffles small pointers, 
 | **Write Amplification** | O(depth of tree) | **Near-Constant** O(1) |
 | **Large Value Handling** | Slows down merging | **Native Efficiency** |
 | **Organization** | Flat Key-Space | **Recursive Sub-Vortices** |
+
+<p align="right">(<a href="#vortexdb">back to top</a>)</p>
 
 ---
 
@@ -57,6 +59,8 @@ sequenceDiagram
     SSTable->>Server: Register in Manifest
 ~~~
 
+<p align="right">(<a href="#vortexdb">back to top</a>)</p>
+
 ---
 ## ✨Technical Features
 
@@ -78,6 +82,7 @@ sequenceDiagram
 - **Multi-Threaded Winsock Server:**  
   A high-concurrency TCP server using `std::shared_mutex` (Single-Writer/Multiple-Reader) for thread-safe network access.
 
+<p align="right">(<a href="#vortexdb">back to top</a>)</p>
 ---
 
 ## 📐 Usage & Interactive Shell
@@ -110,6 +115,7 @@ You can communicate with the engine via any TCP client:
 
 -`SAVE <state_name>` - Creates a snapshot of the current DB state.
 
+<p align="right">(<a href="#vortexdb">back to top</a>)</p>
 ---
 
 ### 🛡️ Data Integrity & Recovery
@@ -146,6 +152,7 @@ To validate VortexDB's architecture, I benchmarked it against standard embedded 
 
 > 📑 **Deep Dive:** I have aldo benchmarked VortexDB at different Memtable as well as payload size(s). **For a detailed breakdown of these numbers, including how VortexDB crushes, matches or lags on certain metrics and the exact architectural reasons behind every one of those, please see [benchmark.md](benchmark.md).**
 
+<p align="right">(<a href="#vortexdb">back to top</a>)</p>
 ---
 
 ### Architectural Breakdown: Why VortexDB Behaves This Way
@@ -189,6 +196,7 @@ VortexDB is a **Systems Exploration project**. To achieve its specific performan
 - **Raw Pointer Management:**  
   The engine uses raw pointers for the recursive sub-db tree to maximize control over the destruction order, requiring careful manual memory management in the `VortexDB` destructor.
 
+<p align="right">(<a href="#vortexdb">back to top</a>)</p>
 ---
 
 ### 📂 Project Structure
@@ -204,6 +212,7 @@ VortexDB is a **Systems Exploration project**. To achieve its specific performan
 └── main.cpp              # 🐚 Interactive Shell & Entry Point
 ```
 
+<p align="right">(<a href="#vortexdb">back to top</a>)</p>
 ---
 
 ## 🚀 Getting Started
@@ -232,5 +241,4 @@ Focused on Distributed Systems, Database Internals, and Performance Engineering.
 ## License
 
 Apache License 2.0.
-
-<p align="right">(<a href="#veilar">back to top</a>)</p>
+<p align="right">(<a href="#vortexdb">back to top</a>)</p>

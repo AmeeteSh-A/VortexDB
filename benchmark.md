@@ -40,21 +40,21 @@ To ensure replicability and consistent I/O constraints, all benchmarks were exec
 Our testing reveals a clear relationship between memory configuration and throughput. 
 
 * **Memtable 1k:** A highly restricted memtable forces constant SSTable flushing, creating severe I/O bottlenecks.
-  ![Terminal - Small 1k](docs/images/small_1k.png)
+  ![Terminal - Small 1k](docs/small_1k.png)
 * **Memtable 10k:** The optimal "Goldilocks" zone. The buffer allows massive sequential VLog batches.
-  ![Terminal - Small 10k](docs/images/small_10k.png)
+  ![Terminal - Small 10k](docs/small_10k.png)
 * **Memtable 100k:** Diminishing returns on latency, but massive gains in ingestion speed.
-  ![Terminal - Small 100k](docs/images/small_100k.png)
+  ![Terminal - Small 100k](docs/small_100k.png)
 
 ### Visualizing Small Payload Performance
 
-> **📊 ![Bar Chart - Small Payload Scaling](docs/images/small_payload_benchmark.png)**
+> **📊 ![Bar Chart - Small Payload Scaling](docs/small_payload_benchmark.png)**
 > *Caption:* **Small Payload Ingestion Scaling:** As the memtable expands from 1k to 10k and 100k, VortexDB's performance skyrockets, overcoming the traditional WiscKey small-payload penalty. 
 
-> **📊 ![Bar Chart - 100k Memtable Focus](docs/images/small_payload_100k_only.png)**
+> **📊 ![Bar Chart - 100k Memtable Focus](docs/small_payload_100k_only.png)**
 > *Caption:* **The 100k Memtable Buffer Advantage:** In this small-payload scenario, VortexDB (~536k ops/s) drastically outperforms LevelDB (~186k ops/s). Why? By expanding the memtable to 100,000 entries, VortexDB acts as a massive shock-absorber. It aggregates tiny payloads in memory and flushes them to the append-only VLog in huge, contiguous, zero-copy sequential batches. This completely bypasses the severe compaction write-amplification that chokes standard LSM-trees (like LevelDB).
 
-> **📊 ![Bar Chart - Read Miss Scaling](docs/images/small_payload_read_miss.png)**
+> **📊 ![Bar Chart - Read Miss Scaling](docs/small_payload_read_miss.png)**
 > *Caption:* **The Scaling Cuckoo Filter:** This graph isolates Read Miss latency. While SQLite consistently burns ~0.05ms doing useless disk I/O for missing keys, LevelDB's internal filters keep it flat at ~0.0005ms. Notice VortexDB's curve: at a 1k memtable, the filter struggles with constant flushing (`0.013ms`). But as the memtable expands to 100k, VortexDB's Cuckoo Filter is unleashed, dropping to an incredible `0.0003ms` and actually outperforming LevelDB in ghost-read deflection.
 
 ---
@@ -77,18 +77,18 @@ Our testing reveals a clear relationship between memory configuration and throug
 ### Large Payload Scaling: Raw Output
 
 * **Memtable 1k:** With 1KB payloads, memory fills up 100x faster. A 1k limit means the engine is virtually halting on every batch to flush.
-  ![Terminal - Large 1k](docs/images/large_1k.png) 
+  ![Terminal - Large 1k](docs/large_1k.png) 
 * **Memtable 10k:** The engine breathes easier, allowing the VLog buffer to saturate the disk efficiently.
-  ![Terminal - Large 10k](docs/images/large_10k.png) 
+  ![Terminal - Large 10k](docs/large_10k.png) 
 * **Memtable 100k:** Reaching the limits of the hardware bandwidth for this payload size.
-  ![Terminal - Large 100k](docs/images/large_100k.png) 
+  ![Terminal - Large 100k](docs/large_100k.png) 
 
 ### Visualizing Large Payload Performance
 
-> **📊 ![Bar Chart - Large Payload Write Ops](docs/images/large_payload_benchmark.png)**
+> **📊 ![Bar Chart - Large Payload Write Ops](docs/large_payload_benchmark.png)**
 > *Caption:* **1KB Payload Ingestion - The Read-Before-Write Penalty:** LevelDB wins this specific micro-benchmark. This exposes the core architectural trade-off of VortexDB's most unique feature: **Recursive Sub-Databases.** Because VortexDB allows databases to be nested inside keys, every `put()` operation requires an initial safety lookup to ensure a structural directory isn't being overwritten. This turns every insertion into a Read-Before-Write. LevelDB executes "Blind Writes" directly to its memory buffer, winning the benchmark, but VortexDB trades that raw speed for strict structural safety.
 
-> **📊 ![Bar Chart - Read Miss Latency](docs/images/read_miss_latency.png)**
+> **📊 ![Bar Chart - Read Miss Latency](docs/read_miss_latency.png)**
 > *Caption:* **The Cuckoo Filter Advantage (1KB):** When querying non-existent keys (Read Miss), SQLite must perform disk I/O, resulting in high latency. VortexDB's in-memory 4-slot Cuckoo Filter mathematically proves the key does not exist and drops the operation before touching the disk, matching LevelDB's near-zero latency (~0.0008ms). Notice how the VortexDB and LevelDB bars are virtually invisible compared to SQLite's massive latency spike.
 
 ---

@@ -1,3 +1,6 @@
+<p align="right">
+  <a href="/README.md">Readme</a>
+  
 # 📊 VortexDB: Performance Benchmarks & Engineering Deep Dive
 
 This document provides a comprehensive breakdown of VortexDB's performance characteristics. As a systems exploration project, VortexDB was built to test a specific hypothesis: **Can combining a WiscKey-style value log with a recursive sub-database architecture outperform traditional LSM-trees?**
@@ -113,8 +116,6 @@ Our testing reveals a clear relationship between memory configuration and throug
 
 ---
 
-## 🛠️ Tech Stack & Design Decisions
 
-- **Why C++17:** Chosen for deterministic memory management and raw pointer precision. This is strictly necessary for managing the recursive sub-database tree, orchestrating multi-threaded read/write locks, and handling high-performance byte-level buffer I/O.
-- **Why WiscKey over pure LSM:** Traditional LSM-trees suffer from severe write amplification when handling larger payloads (like JSON objects or serialized state) over long periods. By isolating keys from values, VortexDB trades away sequential Range Scan speed in exchange for drastically reduced compaction overhead and high-velocity continuous ingestion.
-- **Why Winsock2:** The networking layer utilizes Windows Sockets 2 directly to maintain absolute, low-level control over `TCP_NODELAY` settings and client thread detachment, completely avoiding the bloat of third-party libraries.
+<p align="right">
+  <a href="/README.md">Readme</a>

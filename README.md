@@ -169,23 +169,6 @@ This is the most famous limitation of the WiscKey design. Because values are sep
 
 ---
 
-### Test Results by Memtable Size Configuration
-
-Our testing reveals a clear relationship between configuration and performance. Increasing the `memtable` limit allows the VLog to batch larger sequential writes before pausing to flush the SSTables.
-
-**1. Memtable Limit: 1,000**
-*A highly restricted memtable forces constant SSTable flushing, creating severe I/O bottlenecks and throttling write performance.*
-![Benchmark - Memtable 1000](placeholder_path_to_image_1000)
-
-**2. Memtable Limit: 10,000**
-*The optimal "Goldilocks" zone for this hardware. The buffer is large enough to allow massive sequential VLog batches, rocketing write speeds past LevelDB.*
-![Benchmark - Memtable 10000](placeholder_path_to_image_10000)
-
-**3. Memtable Limit: 100,000**
-*Increasing the buffer further yields diminishing returns. While writes remain incredibly fast, the massive in-memory tree slightly increases lookup latency.*
-![Benchmark - Memtable 100000](placeholder_path_to_image_100000)
-
----
 
 ## 🛠️ Tech Stack Decisions
 

@@ -88,7 +88,7 @@ Our testing reveals a clear relationship between memory configuration and throug
 > **📊 ![Bar Chart - Large Payload Write Ops](docs/large_payload_benchmark.png)**
 > *Caption:* **1KB Payload Ingestion - The Read-Before-Write Penalty:** LevelDB wins this specific micro-benchmark. This exposes the core architectural trade-off of VortexDB's most unique feature: **Recursive Sub-Databases.** Because VortexDB allows databases to be nested inside keys, every `put()` operation requires an initial safety lookup to ensure a structural directory isn't being overwritten. This turns every insertion into a Read-Before-Write. LevelDB executes "Blind Writes" directly to its memory buffer, winning the benchmark, but VortexDB trades that raw speed for strict structural safety.
 
-> **📊 ![Bar Chart - Read Miss Latency](docs/read_miss_latency.png)**
+> **📊 ![Bar Chart - Read Miss Latency](docs/latency_hits_vs_miss.png)**
 > *Caption:* **The Cuckoo Filter Advantage (1KB):** When querying non-existent keys (Read Miss), SQLite must perform disk I/O, resulting in high latency. VortexDB's in-memory 4-slot Cuckoo Filter mathematically proves the key does not exist and drops the operation before touching the disk, matching LevelDB's near-zero latency (~0.0008ms). Notice how the VortexDB and LevelDB bars are virtually invisible compared to SQLite's massive latency spike.
 
 ---

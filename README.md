@@ -1,6 +1,6 @@
 # VortexDB
 ### A Recursive WiscKey Storage Engine
-![Language](https://img.shields.io/badge/Language-C++-orange) ![Platform](https://img.shields.io/badge/Platform-Windows-blue) ![License](https://img.shields.io/badge/License-Apache_2.0-green)
+![Language](https://img.shields.io/badge/Language-C++-orange) ![Platform](https://img.shields.io/badge/Platform-Windows-blue) ![License](https://img.shields.io/badge/License-MIT-green)
 
 ---
 ### 🔗 Quick Links
@@ -240,5 +240,5 @@ Focused on Distributed Systems, Database Internals, and Performance Engineering.
 
 ## License
 
-Apache License 2.0.
+MIT.
 <p align="right">(<a href="#vortexdb">back to top</a>)</p>
